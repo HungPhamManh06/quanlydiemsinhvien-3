@@ -160,27 +160,54 @@ ${context}
 
 Câu hỏi của người dùng: ${text}`;
 
-      const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: {
-              temperature: 0.7,
-              maxOutputTokens: 1024,
-            },
-          }),
-        }
-      );
+      // Thử lần lượt các model
+      const models = [
+        'gemini-2.0-flash',
+        'gemini-1.5-flash',
+        'gemini-1.5-flash-latest',
+        'gemini-pro',
+      ];
 
-      if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData?.error?.message || `HTTP ${res.status}`);
+      let data = null;
+      let lastError = '';
+
+      for (const model of models) {
+        try {
+          const res = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: {
+                  temperature: 0.7,
+                  maxOutputTokens: 1024,
+                },
+              }),
+            }
+          );
+
+          if (!res.ok) {
+            const errData = await res.json();
+            lastError = errData?.error?.message || `HTTP ${res.status}`;
+            console.warn(`Model ${model} failed:`, lastError);
+            continue; // thử model tiếp theo
+          }
+
+          data = await res.json();
+          console.log(`✅ Dùng model: ${model}`);
+          break; // thành công, thoát vòng lặp
+        } catch (fetchErr) {
+          lastError = fetchErr instanceof Error ? fetchErr.message : 'Unknown error';
+          console.warn(`Model ${model} error:`, lastError);
+        }
       }
 
-      const data = await res.json();
+      if (!data) {
+        throw new Error(lastError || 'Tất cả model đều thất bại');
+      }
+
       const replyText = data?.candidates?.[0]?.content?.parts?.[0]?.text
         || 'Xin lỗi, tôi không thể trả lời câu hỏi này.';
 
@@ -196,17 +223,27 @@ Câu hỏi của người dùng: ${text}`;
       console.error('Gemini error:', err);
       let errorMsg = 'Có lỗi xảy ra khi kết nối với AI. Vui lòng thử lại.';
       if (err instanceof Error) {
-        if (err.message.includes('API_KEY') || err.message.includes('api key')) {
-          errorMsg = 'API Key không hợp lệ. Vui lòng kiểm tra lại VITE_GEMINI_API_KEY.';
-        } else if (err.message.includes('quota') || err.message.includes('QUOTA')) {
-          errorMsg = 'Đã hết quota API. Vui lòng thử lại sau hoặc nâng cấp tài khoản.';
+        const msg = err.message;
+        console.error('Chi tiết lỗi:', msg);
+        if (msg.includes('API_KEY') || msg.includes('api key') || msg.includes('API key') || msg.includes('invalid') || msg.includes('401')) {
+          errorMsg = '🔑 API Key không hợp lệ hoặc chưa được cấu hình. Vui lòng kiểm tra biến VITE_GEMINI_API_KEY trên Render.';
+        } else if (msg.includes('quota') || msg.includes('QUOTA') || msg.includes('RESOURCE_EXHAUSTED') || msg.includes('429')) {
+          errorMsg = '⏳ Đã hết quota API miễn phí hôm nay (1500 lần/ngày). Vui lòng thử lại vào ngày mai hoặc tạo API Key mới.';
+        } else if (msg.includes('403')) {
+          errorMsg = '🚫 API Key bị từ chối (403). API Key có thể chưa được kích hoạt hoặc không có quyền dùng Gemini. Thử tạo API Key mới tại aistudio.google.com';
+        } else if (msg.includes('404')) {
+          errorMsg = '🔍 Model không tìm thấy (404). Đang thử lại với model khác...';
+        } else if (msg.includes('500') || msg.includes('503')) {
+          errorMsg = '🔧 Server Google tạm thời lỗi. Vui lòng thử lại sau ít phút.';
+        } else {
+          errorMsg = `❌ Lỗi: ${msg}`;
         }
       }
       setError(errorMsg);
       setMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: `❌ ${errorMsg}`,
+        content: errorMsg,
         timestamp: new Date(),
       }]);
     } finally {
