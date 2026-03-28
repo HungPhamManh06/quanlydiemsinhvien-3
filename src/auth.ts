@@ -64,6 +64,34 @@ function generateToken(): string {
   return 'token_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 16);
 }
 
+// ✅ Hàm kiểm tra độ mạnh mật khẩu
+export function validatePassword(password: string): { valid: boolean; message: string; checks: PasswordChecks } {
+  const checks: PasswordChecks = {
+    minLength: password.length >= 6,
+    hasUppercase: /[A-Z]/.test(password),
+    hasNumber: /[0-9]/.test(password),
+    hasSpecial: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
+  };
+  if (!checks.minLength) {
+    return { valid: false, message: 'Mật khẩu phải có ít nhất 6 ký tự!', checks };
+  }
+  if (!checks.hasUppercase) {
+    return { valid: false, message: 'Mật khẩu phải có ít nhất 1 chữ cái viết hoa (A-Z)!', checks };
+  }
+  if (!checks.hasNumber) {
+    return { valid: false, message: 'Mật khẩu phải có ít nhất 1 chữ số (0-9)!', checks };
+  }
+  if (!checks.hasSpecial) {
+    return { valid: false, message: 'Mật khẩu phải có ít nhất 1 ký tự đặc biệt (!@#$%^&*...)!', checks };
+  }
+  return { valid: true, message: 'Mật khẩu hợp lệ!', checks };
+}
+export interface PasswordChecks {
+  minLength: boolean;
+  hasUppercase: boolean;
+  hasNumber: boolean;
+  hasSpecial: boolean;
+}
 export function toPublicUser(stored: StoredUser): User {
   return {
     id: stored.id,
