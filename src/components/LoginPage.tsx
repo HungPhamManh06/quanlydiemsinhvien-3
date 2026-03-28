@@ -161,9 +161,9 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
       <div className={`hidden lg:flex flex-col justify-center w-1/2 relative z-10 p-12 xl:p-20 transition-all duration-1000 ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
         <div className="max-w-lg">
           <div className="flex items-center gap-4 mb-8">
-            <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/20">
-              <GraduationCap className="w-9 h-9 text-white" />
-            </div>
+            <div className="w-16 h-16 rounded-2xl overflow-hidden">
+              <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
+                </div>
             <div>
               <h1 className="text-3xl font-bold text-white">UTT Grade</h1>
               <p className="text-blue-200 text-sm">Hệ thống Quản lý Điểm Sinh viên</p>
