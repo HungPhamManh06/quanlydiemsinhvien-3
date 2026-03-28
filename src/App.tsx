@@ -183,7 +183,7 @@ export default function App() {
               <GraduationCap className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="font-bold text-gray-900 text-sm leading-tight">UniGrade</h1>
+              <h1 className="font-bold text-gray-900 text-sm leading-tight">UTT Grade</h1>
               <p className="text-xs text-gray-400">Quản Lý Điểm Sinh Viên</p>
             </div>
           </div>
