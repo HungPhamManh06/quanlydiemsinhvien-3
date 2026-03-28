@@ -1,0 +1,20 @@
+databases:
+  - name: student-grades-db
+    plan: free
+    databaseName: student_grades
+    user: admin
+
+services:
+  - type: web
+    plan: free
+    name: student-grade-manager
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: node server/index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: student-grades-db
+          property: connectionString
