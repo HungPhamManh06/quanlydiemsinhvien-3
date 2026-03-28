@@ -14,7 +14,7 @@ import Transcript from './components/Transcript';
 import Statistics from './components/Statistics';
 import {
   LayoutDashboard, Users, BookOpen, ClipboardList, FileText, BarChart3,
-  GraduationCap, Menu, Database, Cloud, HardDrive, Loader2, LogOut
+  GraduationCap, Database, Cloud, HardDrive, Loader2, LogOut
 } from 'lucide-react';
 
 const tabs: { id: Tab; label: string; icon: React.ReactNode; color: string }[] = [
@@ -164,17 +164,15 @@ export default function App() {
     .join('')
     .toUpperCase()
     .slice(0, 2);
-
-  return (
+ return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
-
-      {/* Sidebar */}
-      <aside className={`fixed lg:sticky top-0 left-0 z-50 h-screen w-[260px] bg-white border-r border-gray-100 shadow-lg lg:shadow-none flex flex-col transition-transform duration-300 ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+      {/* Sidebar - chỉ hiện trên desktop lg+ */}
+      <aside className={`fixed lg:sticky top-0 left-0 z-50 h-screen w-[260px] bg-white border-r border-gray-100 shadow-lg lg:shadow-none flex-col transition-transform duration-300 hidden lg:flex ${
+        sidebarOpen ? 'translate-x-0 !flex' : '-translate-x-full lg:translate-x-0'
       } print:hidden`}>
         {/* Logo */}
         <div className="p-5 border-b border-gray-100">
@@ -262,28 +260,26 @@ export default function App() {
           </div>
         </div>
       </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 min-h-screen">
+ {/* Main Content */}
+      <main className="flex-1 min-h-screen flex flex-col">
         {/* Top Bar */}
-        <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-lg border-b border-gray-100 px-4 sm:px-6 py-3 flex items-center justify-between print:hidden">
+        <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-lg border-b border-gray-100 px-4 sm:px-6 py-3 flex items-center justify-between print:hidden">
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2 hover:bg-gray-100 rounded-lg"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <span className="hidden sm:inline">📍</span>
+            {/* Logo nhỏ trên mobile topbar */}
+            <div className="flex lg:hidden items-center gap-2">
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                <GraduationCap className="w-4 h-4 text-white" />
+              </div>
+              <span className="font-bold text-gray-800 text-sm">UTT Grade</span>
+            </div>
+            <div className="hidden lg:flex items-center gap-2 text-sm text-gray-500">
+              <span>📍</span>
               <span className="font-medium text-gray-900">
                 {tabs.find(t => t.id === activeTab)?.label}
               </span>
             </div>
           </div>
-
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <div className="hidden sm:flex items-center gap-2 text-xs text-gray-400 bg-gray-50 px-3 py-1.5 rounded-lg">
               <div className={`w-2 h-2 rounded-full animate-pulse ${isOnline ? 'bg-emerald-500' : 'bg-amber-500'}`} />
               {isOnline ? 'Database Mode' : 'Offline Mode'}
@@ -296,12 +292,52 @@ export default function App() {
             />
           </div>
         </header>
-
-        {/* Content */}
-        <div className="p-4 sm:p-6 lg:p-8 max-w-[1400px] mx-auto">
+        {/* Content - thêm padding bottom cho mobile để không bị bottom nav che */}
+        <div className="flex-1 p-3 sm:p-5 lg:p-8 max-w-[1400px] mx-auto w-full pb-24 lg:pb-8">
           {renderContent()}
         </div>
       </main>
+      {/* ===== MOBILE BOTTOM NAVIGATION ===== */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-2xl print:hidden">
+        {/* Tab title trên mobile */}
+        <div className="flex items-center justify-center py-1 border-b border-gray-100 bg-gray-50">
+          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            {tabs.find(t => t.id === activeTab)?.label}
+          </span>
+        </div>
+        {/* Navigation items */}
+        <div className="grid grid-cols-6 items-center">
+          {tabs.map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => handleTabChange(tab.id)}
+              className={`flex flex-col items-center justify-center py-2 px-1 transition-all ${
+                activeTab === tab.id
+                  ? 'text-blue-600'
+                  : 'text-gray-400 hover:text-gray-600'
+              }`}
+            >
+              <div className={`p-1.5 rounded-xl transition-all ${
+                activeTab === tab.id
+                  ? 'bg-blue-50 scale-110'
+                  : ''
+              }`}>
+                {tab.icon}
+              </div>
+              <span className={`text-[9px] font-medium mt-0.5 leading-tight text-center ${
+                activeTab === tab.id ? 'text-blue-600' : 'text-gray-400'
+              }`}>
+                {tab.label}
+              </span>
+              {activeTab === tab.id && (
+                <div className="w-1 h-1 bg-blue-600 rounded-full mt-0.5" />
+              )}
+            </button>
+          ))}
+        </div>
+        {/* Safe area for phones with home indicator */}
+        <div className="h-safe-area-inset-bottom bg-white" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }} />
+      </nav>
 
       {/* Profile / Password Modal */}
       {modalMode && (
