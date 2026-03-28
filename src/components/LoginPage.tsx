@@ -161,7 +161,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
       <div className={`hidden lg:flex flex-col justify-center w-1/2 relative z-10 p-12 xl:p-20 transition-all duration-1000 ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
         <div className="max-w-lg">
           <div className="flex items-center gap-4 mb-8">
-            <div className="w-16 h-16 rounded-2xl overflow-hidden">
+            <div className="w-20 h-20 rounded-2xl overflow-hidden">
               <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
                 </div>
             <div>
@@ -212,7 +212,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
           {/* Mobile logo */}
           <div className="lg:hidden text-center mb-8">
             <div className="inline-flex items-center gap-3 mb-3">
-              <div className="w-12 h-12 rounded-xl overflow-hidden">
+              <div className="w-16 h-16 rounded-xl overflow-hidden">
                 <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
               </div>
               <div className="text-left">
