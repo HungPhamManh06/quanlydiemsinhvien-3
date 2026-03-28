@@ -212,8 +212,8 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
           {/* Mobile logo */}
           <div className="lg:hidden text-center mb-8">
             <div className="inline-flex items-center gap-3 mb-3">
-              <div className="w-12 h-12 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/20">
-                <GraduationCap className="w-7 h-7 text-white" />
+              <div className="w-12 h-12 rounded-xl overflow-hidden">
+                <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
               </div>
               <div className="text-left">
                 <h1 className="text-2xl font-bold text-white">UTT Grade</h1>
