@@ -1,12 +1,3 @@
-
-type PageView = 'login' | 'register' | 'forgot';
-
-interface LoginPageProps {
-  onLogin: (user: User, token: string) => void;
-}
-
-export default function LoginPage({ onLogin }: LoginPageProps) {
-  const [view, setView] =import { useState, useEffect } from 'react';
 import { useState, useEffect } from 'react';
 import { User, UserRole } from '../types';
 import { login, register, resetPassword, validatePassword } from '../auth';
@@ -15,10 +6,13 @@ import {
   Eye, EyeOff, LogIn, UserPlus, ArrowLeft, KeyRound, Loader2,
   CheckCircle2, XCircle, BookOpen, Users, BarChart3, Shield, Sparkles
 } from 'lucide-react';
+
 type PageView = 'login' | 'register' | 'forgot';
+
 interface LoginPageProps {
   onLogin: (user: User, token: string) => void;
 }
+
 export default function LoginPage({ onLogin }: LoginPageProps) {
   const [view, setView] = useState<PageView>('login');
   const [loading, setLoading] = useState(false);
@@ -26,10 +20,12 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [mounted, setMounted] = useState(false);
+
   // Login form
   const [loginUsername, setLoginUsername] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+
   // Register form
   const [regUsername, setRegUsername] = useState('');
   const [regPassword, setRegPassword] = useState('');
@@ -39,8 +35,10 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
   const [regPhone, setRegPhone] = useState('');
   const [regDepartment, setRegDepartment] = useState('');
   const [regRole, setRegRole] = useState<UserRole>('teacher');
+
   // Forgot password
   const [forgotEmail, setForgotEmail] = useState('');
+
   // Password strength real-time checks
   const pwdChecks = validatePassword(regPassword).checks;
 
@@ -166,12 +164,12 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
       <div className={`hidden lg:flex flex-col justify-center w-1/2 relative z-10 p-12 xl:p-20 transition-all duration-1000 ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
         <div className="max-w-lg">
           <div className="flex items-center gap-4 mb-8">
-            <div className="w-20 h-20 rounded-2xl overflow-hidden">
-              <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
-                </div>
+            <div className="w-20 h-20 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/20">
+              <GraduationCap className="w-12 h-12 text-white" />
+            </div>
             <div>
               <h1 className="text-3xl font-bold text-white">UTT Grade</h1>
-              <p className="text-blue-200 text-sm">Hệ thống Quản lý Điểm Sinh viên</p>
+              <p className="text-blue-200 text-sm">Hệ thống Quản lý Điểm Sinh viên - UTT</p>
             </div>
           </div>
 
@@ -217,12 +215,12 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
           {/* Mobile logo */}
           <div className="lg:hidden text-center mb-8">
             <div className="inline-flex items-center gap-3 mb-3">
-              <div className="w-16 h-16 rounded-xl overflow-hidden">
-                <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
+              <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/20">
+                <GraduationCap className="w-10 h-10 text-white" />
               </div>
               <div className="text-left">
                 <h1 className="text-2xl font-bold text-white">UTT Grade</h1>
-                <p className="text-blue-200 text-xs">Quản lý Điểm Sinh viên</p>
+                <p className="text-blue-200 text-xs">Quản lý Điểm Sinh viên - UTT</p>
               </div>
             </div>
           </div>
@@ -394,8 +392,15 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                 )}
 
                 <form onSubmit={handleRegister} className="space-y-4">
-               
-                  {e => setRegUsername(e.target.value)}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1.5">Tên đăng nhập *</label>
+                      <div className="relative">
+                        <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <input
+                          type="text"
+                          value={regUsername}
+                          onChange={e => setRegUsername(e.target.value)}
                           placeholder="username"
                           className="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 focus:bg-white transition-all"
                         />
@@ -427,7 +432,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                     </div>
                   </div>
 
- {/* Mật khẩu */}
+                  {/* Mật khẩu */}
                   <div>
                     <label className="block text-xs font-semibold text-gray-700 mb-1.5">Mật khẩu *</label>
                     <div className="relative">
@@ -443,6 +448,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                     </div>
+
                     {/* ✅ Password Strength Indicator - hiện khi bắt đầu nhập */}
                     {regPassword.length > 0 && (
                       <div className="mt-2.5 p-3 bg-gray-50 rounded-xl border border-gray-200 space-y-1.5">
@@ -499,6 +505,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                       </div>
                     )}
                   </div>
+
                   {/* Xác nhận mật khẩu */}
                   <div>
                     <label className="block text-xs font-semibold text-gray-700 mb-1.5">Xác nhận mật khẩu *</label>
@@ -656,8 +663,8 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
 
           {/* Footer */}
           <div className="text-center mt-6 text-blue-200/50 text-xs">
-            <p>© 2026 UTT Grade - Hệ thống Quản lý Điểm Sinh viên</p>
-            <p className="mt-1">Phát triển bởi nhóm sinh viên Đại học CNGTVT </p>
+            <p>© 2025 - Hệ thống Quản lý Điểm Sinh viên</p>
+            <p className="mt-1">Phát triển bởi Trường Đại học Công nghệ Giao thông Vận tải (UTT)</p>
           </div>
         </div>
       </div>
