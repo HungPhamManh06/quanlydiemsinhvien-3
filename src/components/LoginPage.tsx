@@ -161,26 +161,26 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
       </div>
 
       {/* Left side - Features (hidden on mobile) */}
-      <div className={`hidden lg:flex flex-col justify-center w-1/2 relative z-10 p-12 xl:p-20 transition-all duration-1000 ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
+      <div className={`hidden lg:flex flex-col justify-center w-1/2 relative z-10 p-12 xl:p-20 transition-all duration-1000 ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`} style={{ colorScheme: 'dark' }}>
         <div className="max-w-lg">
           <div className="flex items-center gap-4 mb-8">
           <div className="w-20 h-20 rounded-2xl overflow-hidden">
           <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
           </div>
             <div>
-              <h1 className="text-3xl font-bold text-white">UTT Grade</h1>
-              <p className="text-blue-200 text-sm">Hệ thống Quản lý Điểm Sinh viên - UTT</p>
+              <h1 className="text-3xl font-bold leading-tight" style={{ color: '#ffffff' }}>UTT Grade</h1>
+              <p className="text-sm" style={{ color: '#bfdbfe' }}>Hệ thống Quản lý Điểm Sinh viên - UTT</p>
             </div>
           </div>
 
-          <h2 className="text-4xl xl:text-5xl font-bold text-white leading-tight mb-6">
+          <h2 className="text-4xl xl:text-5xl font-bold leading-tight mb-6" style={{ color: '#ffffff' }}>
             Quản lý điểm số
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
-              thông minh & hiệu quả
+              thông minh &amp; hiệu quả
             </span>
           </h2>
 
-          <p className="text-blue-200/80 text-lg mb-10 leading-relaxed">
+          <p className="text-lg mb-10 leading-relaxed" style={{ color: 'rgba(191,219,254,0.8)' }}>
             Giải pháp toàn diện cho việc quản lý điểm học tập sinh viên tại các trường đại học.
             Giao diện hiện đại, dễ sử dụng với đầy đủ tính năng.
           </p>
@@ -195,13 +195,13 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                 <div className="w-12 h-12 bg-gradient-to-br from-blue-400/20 to-indigo-400/20 rounded-xl flex items-center justify-center mb-3 text-blue-300 group-hover:scale-110 transition-transform">
                   {f.icon}
                 </div>
-                <h3 className="text-white font-semibold text-sm mb-1">{f.title}</h3>
-                <p className="text-blue-300/60 text-xs">{f.desc}</p>
+                <h3 className="font-semibold text-sm mb-1" style={{ color: '#ffffff' }}>{f.title}</h3>
+                <p className="text-xs" style={{ color: 'rgba(147,197,253,0.6)' }}>{f.desc}</p>
               </div>
             ))}
           </div>
 
-          <div className="mt-10 flex items-center gap-3 text-blue-300/50 text-sm">
+          <div className="mt-10 flex items-center gap-3 text-sm" style={{ color: 'rgba(147,197,253,0.5)' }}>
             <Sparkles className="w-4 h-4" />
             <span>Phiên bản 2.0 • Hỗ trợ PostgreSQL • Responsive</span>
           </div>
