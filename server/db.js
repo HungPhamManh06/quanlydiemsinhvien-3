@@ -20,9 +20,12 @@ if (!process.env.DATABASE_URL) {
   process.exit(1);
 }
 
+const isInternalIP = process.env.DATABASE_URL && process.env.DATABASE_URL.includes('@10.');
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  // Tắt SSL cho mạng nội bộ Render (IP 10.x.x.x) vì mạng nội bộ không hỗ trợ/yêu cầu SSL
+  ssl: (process.env.NODE_ENV === 'production' && !isInternalIP) ? { rejectUnauthorized: false } : false,
   connectionTimeoutMillis: 10000,
   idleTimeoutMillis: 30000,
   max: 10,
@@ -34,12 +37,27 @@ pool.on('error', (err) => {
 });
 
 // Tạo bảng nếu chưa tồn tại
-export async function initDatabase() {
+export async function initDatabase(retries = 7) {
   let client;
+  while (retries > 0) {
+    try {
+      client = await pool.connect();
+      console.log('✅ Kết nối database thành công!');
+      break; // Kết nối thành công, thoát khỏi vòng lặp
+    } catch (err) {
+      console.error(`❌ Lỗi kết nối database: ${err.message}`);
+      retries -= 1;
+      if (retries === 0) {
+        console.error('❌ Đã hết số lần thử kết nối database.');
+        throw err;
+      }
+      console.log(`⏳ Đang thử lại trong 5 giây... (Còn ${retries} lần thử)`);
+      // Đợi 5 giây trước khi thử lại
+      await new Promise(res => setTimeout(res, 5000));
+    }
+  }
+
   try {
-    client = await pool.connect();
-    console.log('✅ Kết nối database thành công!');
-    
     await client.query(`
       CREATE TABLE IF NOT EXISTS students (
         id TEXT PRIMARY KEY,
