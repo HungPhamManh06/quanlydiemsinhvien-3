@@ -176,7 +176,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
           <h2 className="text-4xl xl:text-5xl font-bold leading-tight mb-6" style={{ color: '#ffffff' }}>
             Quản lý điểm số
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
-              thông minh &amp; hiệu quả
+              thông minh & hiệu quả
             </span>
           </h2>
 
@@ -201,7 +201,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
             ))}
           </div>
 
-          <div className="mt-10 flex items-center gap-3 text-sm" style={{ color: 'rgba(147,197,253,0.5)' }}>
+          <div className="mt-10 flex items-center gap-3 text-sm" style={{ color: 'rgba(255,255,255,0.8)' }}>
             <Sparkles className="w-4 h-4" />
             <span>Phiên bản 2.0 • Hỗ trợ PostgreSQL • Responsive</span>
           </div>
@@ -662,7 +662,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
           </div>
 
           {/* Footer */}
-          <div className="text-center mt-6 text-blue-200/50 text-xs">
+          <div className="text-center mt-6 text-xs" style={{ color: 'rgba(255,255,255,0.7)' }}>
             <p>© 2026 - Hệ thống Quản lý Điểm Sinh viên</p>
             <p className="mt-1">Phát triển bởi Nhóm sinh viên của Trường Đại học Công nghệ Giao thông Vận tải (UTT)</p>
           </div>
