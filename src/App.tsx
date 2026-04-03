@@ -13,9 +13,10 @@ import GradeManagement from './components/GradeManagement';
 import Transcript from './components/Transcript';
 import Statistics from './components/Statistics';
 import GeminiChat from './components/GeminiChat';
+import { ToastProvider } from './components/Toast';
 import {
   LayoutDashboard, Users, BookOpen, ClipboardList, FileText, BarChart3,
-  GraduationCap, Database, Cloud, HardDrive, Loader2, LogOut
+  GraduationCap, Database, Cloud, HardDrive, Loader2, LogOut, Moon, Sun
 } from 'lucide-react';
 
 const tabs: { id: Tab; label: string; icon: React.ReactNode; color: string }[] = [
@@ -38,6 +39,20 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [isOnline, setIsOnline] = useState(false);
   const [modalMode, setModalMode] = useState<'profile' | 'password' | null>(null);
+  const [darkMode, setDarkMode] = useState<boolean>(() => {
+    const saved = localStorage.getItem('darkMode');
+    return saved ? JSON.parse(saved) : false;
+  });
+
+  // Apply dark class to html element
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('darkMode', JSON.stringify(darkMode));
+  }, [darkMode]);
 
   // Check auth on mount
   useEffect(() => {
@@ -167,16 +182,17 @@ export default function App() {
     .slice(0, 2);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <ToastProvider>
+    <div className={`min-h-screen bg-gray-50 flex ${darkMode ? 'dark' : ''}`}>
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
-      {/* Sidebar - chỉ hiện trên desktop lg+ */}
+      {/* Sidebar */}
       <aside className={`fixed lg:sticky top-0 left-0 z-50 h-screen w-[260px] bg-white border-r border-gray-100 shadow-lg lg:shadow-none flex-col transition-transform duration-300 hidden lg:flex ${
         sidebarOpen ? 'translate-x-0 !flex' : '-translate-x-full lg:translate-x-0'
-      } print:hidden`}>
+      } print:hidden dark:bg-gray-900 dark:border-gray-700`}>
         {/* Logo */}
         <div className="p-5 border-b border-gray-100">
           <div className="flex items-center gap-3">
@@ -206,22 +222,22 @@ export default function App() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
-          <p className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Menu chính</p>
+        <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
+          <p className="px-3 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Menu chính</p>
           {tabs.map(tab => (
             <button
               key={tab.id}
               onClick={() => handleTabChange(tab.id)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all relative ${
                 activeTab === tab.id
-                  ? 'bg-blue-50 text-blue-700 shadow-sm'
+                  ? 'bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 shadow-sm'
                   : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
               }`}
             >
-              <span className={activeTab === tab.id ? tab.color : 'text-gray-400'}>{tab.icon}</span>
-              {tab.label}
+              <span className={`transition-colors ${activeTab === tab.id ? tab.color : 'text-gray-400'}`}>{tab.icon}</span>
+              <span className="flex-1 text-left">{tab.label}</span>
               {activeTab === tab.id && (
-                <div className="ml-auto w-1.5 h-1.5 bg-blue-600 rounded-full" />
+                <div className="w-1.5 h-5 bg-blue-600 rounded-full ml-auto" />
               )}
             </button>
           ))}
@@ -267,29 +283,40 @@ export default function App() {
       {/* Main Content */}
       <main className="flex-1 min-h-screen flex flex-col">
         {/* Top Bar */}
-        <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-lg border-b border-gray-100 px-4 sm:px-6 py-3 flex items-center justify-between print:hidden">
+        <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-lg border-b border-gray-100 px-4 sm:px-6 py-3 flex items-center justify-between print:hidden dark:bg-gray-900/90 dark:border-gray-700">
           <div className="flex items-center gap-3">
-            {/* Logo nhỏ trên mobile topbar */}
+            {/* Mobile logo */}
             <div className="flex lg:hidden items-center gap-2">
               <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
                 <GraduationCap className="w-4 h-4 text-white" />
               </div>
-              <span className="font-bold text-gray-800 text-sm">UTT Grade</span>
+              <span className="font-black text-gray-800 text-sm">UTT Grade</span>
             </div>
 
-            <div className="hidden lg:flex items-center gap-2 text-sm text-gray-500">
-              <span>📍</span>
-              <span className="font-medium text-gray-900">
+            {/* Breadcrumb */}
+            <div className="hidden lg:flex items-center gap-2 text-sm">
+              <span className="text-gray-400">UTT Grade</span>
+              <span className="text-gray-300">/</span>
+              <span className="font-semibold text-gray-900">
                 {tabs.find(t => t.id === activeTab)?.label}
               </span>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="hidden sm:flex items-center gap-2 text-xs text-gray-400 bg-gray-50 px-3 py-1.5 rounded-lg">
+            {/* Online/Offline indicator */}
+            <div className="hidden sm:flex items-center gap-2 text-xs text-gray-500 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
               <div className={`w-2 h-2 rounded-full animate-pulse ${isOnline ? 'bg-emerald-500' : 'bg-amber-500'}`} />
-              {isOnline ? 'Database Mode' : 'Offline Mode'}
+              {isOnline ? 'PostgreSQL' : 'Offline'}
             </div>
+            {/* Dark Mode Toggle */}
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              className="p-2 rounded-xl border border-gray-200 hover:bg-gray-100 transition-all hover:scale-105 active:scale-95"
+              title={darkMode ? 'Chế độ sáng' : 'Chế độ tối'}
+            >
+              {darkMode ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-gray-500" />}
+            </button>
             <ProfileDropdown
               user={currentUser}
               onLogout={handleLogout}
@@ -367,5 +394,6 @@ export default function App() {
         apiKey={import.meta.env.VITE_GEMINI_API_KEY || ''}
       />
     </div>
+    </ToastProvider>
   );
 }
