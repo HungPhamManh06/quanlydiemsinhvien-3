@@ -145,7 +145,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
   ];
 
   return (
-    <div className="min-h-screen flex relative overflow-hidden">
+    <div className="min-h-screen flex relative overflow-hidden" style={{ colorScheme: 'light' }}>
       {/* Animated Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900">
         <div className="absolute inset-0 opacity-30">
@@ -225,8 +225,8 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
             </div>
           </div>
 
-          {/* Card */}
-          <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl shadow-black/20 overflow-hidden">
+          {/* Card — luôn dùng màu sáng, không bị dark mode ảnh hưởng */}
+          <div className="bg-white backdrop-blur-xl rounded-3xl shadow-2xl shadow-black/20 overflow-hidden" style={{ colorScheme: 'light' }}>
             
             {/* LOGIN VIEW */}
             {view === 'login' && (
@@ -261,7 +261,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                         value={loginUsername}
                         onChange={e => setLoginUsername(e.target.value)}
                         placeholder="Nhập tên đăng nhập"
-                        className="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 focus:bg-white transition-all"
+                        className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all" style={{ backgroundColor: '#f9fafb', color: '#111827' }}
                         autoFocus
                       />
                     </div>
@@ -276,7 +276,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                         value={loginPassword}
                         onChange={e => setLoginPassword(e.target.value)}
                         placeholder="Nhập mật khẩu"
-                        className="w-full pl-11 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 focus:bg-white transition-all"
+                        className="w-full pl-11 pr-12 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all" style={{ backgroundColor: '#f9fafb', color: '#111827' }}
                       />
                       <button
                         type="button"
@@ -427,7 +427,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                         value={regEmail}
                         onChange={e => setRegEmail(e.target.value)}
                         placeholder="email@university.edu.vn"
-                        className="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 focus:bg-white transition-all"
+                        className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-xl text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 transition-all" style={{ backgroundColor: '#f9fafb', color: '#111827' }}
                       />
                     </div>
                   </div>
@@ -442,7 +442,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                         value={regPassword}
                         onChange={e => setRegPassword(e.target.value)}
                         placeholder="Tối thiểu 6 ký tự"
-                        className="w-full pl-9 pr-9 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 focus:bg-white transition-all"
+                        className="w-full pl-9 pr-9 py-2.5 border border-gray-200 rounded-xl text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 transition-all" style={{ backgroundColor: '#f9fafb', color: '#111827' }}
                       />
                       <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -516,13 +516,13 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                         value={regConfirmPassword}
                         onChange={e => setRegConfirmPassword(e.target.value)}
                         placeholder="Nhập lại mật khẩu"
-                        className={`w-full pl-9 pr-9 py-2.5 bg-gray-50 border rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:bg-white transition-all ${
+                        className={`w-full pl-9 pr-9 py-2.5 border rounded-xl text-sm placeholder-gray-400 focus:outline-none focus:ring-2 transition-all ${
                           regConfirmPassword.length > 0
                             ? regConfirmPassword === regPassword
                               ? 'border-emerald-400 focus:ring-emerald-500/40 focus:border-emerald-500'
                               : 'border-red-400 focus:ring-red-500/40 focus:border-red-500'
                             : 'border-gray-200 focus:ring-emerald-500/40 focus:border-emerald-500'
-                        }`}
+                        }`} style={{ backgroundColor: '#f9fafb', color: '#111827' }}
                       />
                       <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                         {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
