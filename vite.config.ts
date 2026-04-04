@@ -16,4 +16,24 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"),
     },
   },
+  optimizeDeps: {
+    include: ['xlsx'],
+  },
+  build: {
+    rollupOptions: {
+      onwarn(warning, warn) {
+        // Suppress xlsx-related Node built-in warnings
+        if (
+          warning.code === 'MODULE_LEVEL_VARIABLE' ||
+          (warning.message && warning.message.includes('xlsx'))
+        ) return;
+        warn(warning);
+      },
+    },
+    commonjsOptions: {
+      include: [/node_modules/],
+      transformMixedEsModules: true,
+    },
+  },
 });
+
