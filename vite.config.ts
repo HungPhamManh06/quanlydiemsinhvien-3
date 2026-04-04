@@ -14,23 +14,6 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
-      // Use prebuilt browser bundle of xlsx so viteSingleFile can inline it
-      "xlsx": path.resolve(__dirname, "node_modules/xlsx/dist/xlsx.full.min.js"),
-    },
-  },
-  optimizeDeps: {
-    include: ['xlsx'],
-  },
-  build: {
-    rollupOptions: {
-      onwarn(warning, warn) {
-        // Suppress xlsx-related Node built-in warnings
-        if (
-          warning.code === 'MODULE_LEVEL_VARIABLE' ||
-          (warning.message && warning.message.includes('xlsx'))
-        ) return;
-        warn(warning);
-      },
     },
   },
 });

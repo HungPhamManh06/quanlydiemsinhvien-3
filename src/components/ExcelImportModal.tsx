@@ -1,5 +1,7 @@
 import { useState, useRef, useCallback } from 'react';
-import * as XLSX from 'xlsx';
+// xlsx is loaded from CDN dynamically to avoid bundling issues with viteSingleFile
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type XLSXType = any;
 import { Student, Subject, Grade } from '../types';
 import * as api from '../api';
 import {
@@ -72,6 +74,29 @@ function parseScore(val: unknown): number | null {
 function str(val: unknown): string {
   if (val === null || val === undefined) return '';
   return String(val).trim();
+}
+
+// ─── CDN Loader ─────────────────────────────────────────────────────────────
+
+let _xlsxCache: XLSXType = null;
+async function getXLSX(): Promise<XLSXType> {
+  if (_xlsxCache) return _xlsxCache;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if ((window as any).XLSX) {
+    _xlsxCache = (window as any).XLSX;
+    return _xlsxCache;
+  }
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js';
+    script.onload = () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      _xlsxCache = (window as any).XLSX;
+      resolve(_xlsxCache);
+    };
+    script.onerror = () => reject(new Error('Không thể tải thư viện xử lý Excel. Kiểm tra kết nối mạng.'));
+    document.head.appendChild(script);
+  });
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
@@ -192,21 +217,28 @@ export default function ExcelImportModal({ type, students = [], subjects = [], g
 
   // ── Parse Excel ────────────────────────────────────────────────────────────
 
-  function parseFile(file: File) {
+  async function parseFile(file: File) {
+    let XLSX: XLSXType;
+    try {
+      XLSX = await getXLSX();
+    } catch {
+      toast.error('Lỗi!', 'Không thể tải thư viện Excel. Kiểm tra kết nối mạng.');
+      return;
+    }
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
         const data = new Uint8Array(e.target!.result as ArrayBuffer);
         const wb = XLSX.read(data, { type: 'array', cellDates: true });
         const ws = wb.Sheets[wb.SheetNames[0]];
-        const rawRows = XLSX.utils.sheet_to_json<Record<string, unknown>>(ws, { defval: '' });
+        const rawRows = XLSX.utils.sheet_to_json(ws, { defval: '' }) as Record<string, unknown>[];
 
         if (rawRows.length === 0) {
           toast.error('Lỗi!', 'File Excel không có dữ liệu hoặc sheet trống.');
           return;
         }
 
-        const validated = rawRows.map((r, i) => validateRow(r, i + 2));
+        const validated = rawRows.map((r: Record<string, unknown>, i: number) => validateRow(r, i + 2));
         setRows(validated);
         setPhase('preview');
       } catch {
@@ -227,12 +259,19 @@ export default function ExcelImportModal({ type, students = [], subjects = [], g
 
   // ── Download Template ──────────────────────────────────────────────────────
 
-  function downloadTemplate() {
+  async function downloadTemplate() {
+    let XLSX: XLSXType;
+    try {
+      XLSX = await getXLSX();
+    } catch {
+      toast.error('Lỗi!', 'Không thể tải thư viện Excel. Kiểm tra kết nối mạng.');
+      return;
+    }
     const tpl = TEMPLATES[type];
     const ws = XLSX.utils.aoa_to_sheet([tpl.headers, ...tpl.sample]);
 
     // Style header row width
-    const colWidths = tpl.headers.map(h => ({ wch: Math.max(h.length + 5, 18) }));
+    const colWidths = tpl.headers.map((h: string) => ({ wch: Math.max(h.length + 5, 18) }));
     ws['!cols'] = colWidths;
 
     const wb = XLSX.utils.book_new();
